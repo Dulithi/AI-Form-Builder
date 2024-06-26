@@ -12,10 +12,10 @@ import {
 import React from "react";
 import FieldEdit from "./FieldEdit";
 
-function FormUi({ jsonForm, onFieldUpdate, onFieldDelete}) {
+function FormUi({ jsonForm, onFieldUpdate, onFieldDelete, selectedTheme}) {
 
   return (
-    <div className="w-fit">
+    <div className="w-fit p-5 border rounded-lg" data-theme={selectedTheme}>
       <div className="border rounded-lg  p-5 mb-3">
         <h1 className="text-2xl font-bold pb-2">{jsonForm?.formTitle}</h1>
         <h2 className="text-gray-600">{jsonForm?.formSubHeading}</h2>
@@ -29,8 +29,8 @@ function FormUi({ jsonForm, onFieldUpdate, onFieldDelete}) {
                 {field.fieldLabel}
               </Label>
               {field.fieldType === "select" ? (
-                <Select>
-                  <SelectTrigger>
+                <Select >
+                  <SelectTrigger className="bg-transparent">
                     <SelectValue placeholder={field.fieldPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
@@ -94,6 +94,7 @@ function FormUi({ jsonForm, onFieldUpdate, onFieldDelete}) {
                   id={`field-${index}`}
                   placeholder={field.fieldPlaceholder}
                   name={field.fieldName}
+                  className="bg-transparent"
                 />
               )}
             </div>
@@ -104,7 +105,9 @@ function FormUi({ jsonForm, onFieldUpdate, onFieldDelete}) {
             </div>
           );
         })}
+        <button className="btn btn-primary m-3">Submit</button>
       </div>
+      
     </div>
   );
 }

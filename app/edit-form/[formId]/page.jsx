@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import FormUi from '../_components/FormUi'
 import { toast } from 'sonner'
+import Controller from '@/app/dashboard/_components/Controller'
 
 function EditForm({params}) {
 
@@ -17,6 +18,8 @@ function EditForm({params}) {
     const [updateTrigger, setUpdateTrigger] = useState();
 
     const router = useRouter();
+
+    const [selectedTheme, setSelectedTheme] = useState("light")
 
     useEffect(()=>{user && getFormData();}, [user]);
 
@@ -71,11 +74,16 @@ function EditForm({params}) {
         </h2>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div className='border rounded-lg p-5 shadow-md'>
-                control
+                <Controller selectedTheme={(value)=>setSelectedTheme(value)}/>
             </div>
             <div className='md:col-span-2 p-8 border rounded-lg h-fit min-h-screen flex items-center justify-center'>
             
-                        <FormUi jsonForm={jsonForm} onFieldUpdate={onFieldUpdate} onFieldDelete={onFieldDelete}/>
+                        <FormUi 
+                            jsonForm={jsonForm}
+                            onFieldUpdate={onFieldUpdate} 
+                            onFieldDelete={onFieldDelete}
+                            selectedTheme={selectedTheme}
+                        />
                     
             </div>
         </div>
