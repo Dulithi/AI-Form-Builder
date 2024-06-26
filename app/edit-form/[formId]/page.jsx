@@ -19,7 +19,8 @@ function EditForm({params}) {
 
     const router = useRouter();
 
-    const [selectedTheme, setSelectedTheme] = useState("light")
+    const [selectedTheme, setSelectedTheme] = useState("light");
+    const [selectedBg, setSelectedBg] = useState();
 
     useEffect(()=>{user && getFormData();}, [user]);
 
@@ -31,6 +32,8 @@ function EditForm({params}) {
         const form = JSON.parse(result[0].jsonform);
         console.log(JSON.parse(result[0].jsonform));
         setJsonForm(form);
+        result[0].theme && setSelectedTheme(result[0].theme);
+        result[0].background && setSelectedBg(result[0].background);
 
     }
 
@@ -38,7 +41,7 @@ function EditForm({params}) {
         const result = await db.update(forms)
         .set({jsonform : jsonForm})
         .where(and(eq(forms.id, params?.formId), eq(forms.createdBy, user?.primaryEmailAddress?.emailAddress)));
-        console.log(result);
+        
     }
 
 
@@ -67,6 +70,16 @@ function EditForm({params}) {
 
     }
 
+    const updateControllerFields= async (value, columnName) => {
+        const result = await db.update(forms)
+        .set({[columnName]: value})
+        .where(and(eq(forms.id, params?.formId), eq(forms.createdBy, user?.primaryEmailAddress?.emailAddress)))
+        .returning({id:forms.id});
+
+        toast(`${columnName} updated!`)
+        
+    }
+
   return (
     <div className='p-8'>
         <h2 className='w-32 flex items-center gap-2 hover:font-bold mb-3' onClick={()=>{router.back()}}>
@@ -74,9 +87,18 @@ function EditForm({params}) {
         </h2>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div className='border rounded-lg p-5 shadow-md'>
-                <Controller selectedTheme={(value)=>setSelectedTheme(value)}/>
+                <Controller 
+                    selectedTheme={(value)=>{
+                        updateControllerFields(value, "theme");
+                        setSelectedTheme(value);
+                        }}
+                    selectedBg={(value)=>{
+                        updateControllerFields(value, "background");
+                        setSelectedBg(value);
+                        }}
+                    />
             </div>
-            <div className='md:col-span-2 p-8 border rounded-lg h-fit min-h-screen flex items-center justify-center'>
+            <div className={`md:col-span-2 p-8 border rounded-lg h-fit min-h-screen flex items-center justify-center ${selectedBg}`}>
             
                         <FormUi 
                             jsonForm={jsonForm}

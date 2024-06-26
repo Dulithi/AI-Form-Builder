@@ -1,11 +1,16 @@
+"use client"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import React from 'react'
+import React, { useState } from 'react'
 import themes from '@/app/_data/themes'
+import gradientBg from '@/app/_data/gradientBg'
+import { Button } from '@/components/ui/button'
 
-function Controller({selectedTheme}) {
+function Controller({selectedTheme, selectedBg}) {
+    const [bgShowMore, setBgShowMore] = useState(false);
   return (
     <div>
-        <h2 className='my-2'>Select Themes</h2>
+        {/* Theme selection controller */}
+        <h2 className='my-2'>Themes</h2>
         <Select onValueChange={(value)=>selectedTheme(value)}>
             <SelectTrigger className="w-full">
                 <SelectValue placeholder="Theme" />
@@ -26,6 +31,26 @@ function Controller({selectedTheme}) {
             </SelectItem> </div>)}
             </SelectContent>
         </Select>
+
+        {/* background selection controller */}
+        <h2 className='my-2 mt-8'>Background</h2>
+        <div className='grid grid-cols-3 gap-4'>
+            {gradientBg.map((bg, index)=>(!bgShowMore ? 
+            index < 6 &&
+                <div 
+                key={index} 
+                onClick={()=>selectedBg(bg.gradient)}
+                className={`w-full h-[70px] ${bg.gradient} rounded-lg border hover:shadow-lg hover:border-black cursor-pointer flex items-center justify-center`}>
+                    {index===0 && <p className='text-center text-sm'>{`${bg.name}`}</p>}
+                </div>
+            : <div key={index}
+                onClick={()=>selectedBg(bg.gradient)}
+                className={`w-full h-[70px] ${bg.gradient} rounded-lg border hover:shadow-lg hover:border-black cursor-pointer flex items-center justify-center`}>
+                    {index===0 && <p className='text-center text-sm'>{`${bg.name}`}</p>}
+            </div>
+            ))}
+        </div>
+        <Button variant="ghost" size="sm" className="mt-5 w-full" onClick={()=>setBgShowMore(!bgShowMore)}>{!bgShowMore? "Show more" : "Show less"}</Button>
 
     </div>
   )
