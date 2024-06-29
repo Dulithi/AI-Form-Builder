@@ -12,10 +12,13 @@ import {
 import React from "react";
 import FieldEdit from "./FieldEdit";
 
-function FormUi({ jsonForm, onFieldUpdate, onFieldDelete, selectedTheme}) {
+function FormUi({ jsonForm, onFieldUpdate, onFieldDelete, selectedTheme, selectedStyle, editable=true}) {
 
   return (
-    <div className={`w-fit p-5 border rounded-lg`} data-theme={selectedTheme}>
+    <div 
+      className={`w-fit p-5 rounded-lg border ${selectedStyle}`} 
+      data-theme={selectedTheme} 
+      >
       <div className="border rounded-lg  p-5 mb-3">
         <h1 className="text-2xl font-bold pb-2">{jsonForm?.formTitle}</h1>
         <h2 className="text-gray-600">{jsonForm?.formSubHeading}</h2>
@@ -99,9 +102,9 @@ function FormUi({ jsonForm, onFieldUpdate, onFieldDelete, selectedTheme}) {
               )}
             </div>
 
-              <div>
+              {editable && <div>
                 <FieldEdit field={field} onUpdate={(value)=> onFieldUpdate(value, index)} onDelete={()=> onFieldDelete(index)}/>
-              </div>
+              </div>}
             </div>
           );
         })}

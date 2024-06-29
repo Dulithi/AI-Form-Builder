@@ -4,8 +4,10 @@ import React, { useState } from 'react'
 import themes from '@/app/_data/themes'
 import gradientBg from '@/app/_data/gradientBg'
 import { Button } from '@/components/ui/button'
+import style from '@/app/_data/style'
+import Image from 'next/image'
 
-function Controller({selectedTheme, selectedBg}) {
+function Controller({selectedTheme, selectedBg, selectedStyle}) {
     const [bgShowMore, setBgShowMore] = useState(false);
   return (
     <div>
@@ -17,8 +19,8 @@ function Controller({selectedTheme, selectedBg}) {
             </SelectTrigger>
             <SelectContent>
             {themes.map((theme, index)=> 
-            <div className='border m-1 rounded-lg' style={{colorScheme: theme.colorScheme, color:theme['base-content'? 'base-content':'primary-content'], backgroundColor:theme['base-100']}}>
-            <SelectItem key={index} value={theme.theme} >
+            <div key={index} className='border m-1 rounded-lg' style={{colorScheme: theme.colorScheme, color:theme['base-content'? 'base-content':'primary-content'], backgroundColor:theme['base-100']}}>
+            <SelectItem value={theme.theme} >
                 <div className='flex gap-3'>
                     <div className='flex'>
                     <div className='w-5 h-5 rounded-l-lg' style={{backgroundColor:theme.primary}}></div>
@@ -51,6 +53,23 @@ function Controller({selectedTheme, selectedBg}) {
             ))}
         </div>
         <Button variant="ghost" size="sm" className="mt-5 w-full" onClick={()=>setBgShowMore(!bgShowMore)}>{!bgShowMore? "Show more" : "Show less"}</Button>
+
+        {/* Style selection controller */}
+        <h2 className='my-2 mt-8'>Style</h2>
+        <div className='grid grid-cols-3 gap-4'>
+            {style.map((item, index) => 
+                <div key={index} 
+                    onClick={()=>selectedStyle(item.value)}
+                >
+                    <div className='border shadow-md rounded-lg hover:border-black hover:shadow-lg'>
+                        <Image className='rounded-lg' src={item.image} width={200} height={200} alt={item.name}/>
+                    </div>
+
+                    <p className='text-center text-xs text-gray-700 pt-2'>{item.name}</p>
+                    
+                </div>)}
+        </div>
+
 
     </div>
   )

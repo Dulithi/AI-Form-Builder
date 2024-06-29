@@ -4,14 +4,15 @@ import { Button } from '@/components/ui/button'
 import { SignInButton, UserButton, useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import { usePathname } from 'next/navigation'
+import React, { useEffect } from 'react'
 
 function Header() {
 
   const {isSignedIn, user} = useUser();
+  const path = usePathname();
 
-
-  return (
+  return !path.includes("view-form") && (
     <div className='shadow-sm border-b px-8 py-5'>
         <div className='flex items-center justify-between'>
             <Image 

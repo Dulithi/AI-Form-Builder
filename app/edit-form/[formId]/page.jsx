@@ -4,12 +4,15 @@ import { db } from '@/configs'
 import { forms } from '@/configs/schema'
 import { useUser } from '@clerk/nextjs'
 import { and, eq } from 'drizzle-orm'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Eye, Share2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import FormUi from '../_components/FormUi'
 import { toast } from 'sonner'
 import Controller from '@/app/dashboard/_components/Controller'
+import { Button } from '@/components/ui/button'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import Link from 'next/link'
 
 function EditForm({params}) {
 
@@ -21,6 +24,7 @@ function EditForm({params}) {
 
     const [selectedTheme, setSelectedTheme] = useState("light");
     const [selectedBg, setSelectedBg] = useState();
+    const [selectedStyle, setSelectedStyle] = useState();
 
     useEffect(()=>{user && getFormData();}, [user]);
 
@@ -34,6 +38,7 @@ function EditForm({params}) {
         setJsonForm(form);
         result[0].theme && setSelectedTheme(result[0].theme);
         result[0].background && setSelectedBg(result[0].background);
+        result[0].style && setSelectedStyle(result[0].style);
 
     }
 
@@ -82,9 +87,31 @@ function EditForm({params}) {
 
   return (
     <div className='p-8'>
-        <h2 className='w-32 flex items-center gap-2 hover:font-bold mb-3' onClick={()=>{router.back()}}>
-            <ArrowLeft /> Back
-        </h2>
+        <div className='flex items-center justify-between'>
+            <h2 className='w-32 flex items-center gap-2 hover:font-bold mb-3' onClick={()=>{router.back()}}>
+                <ArrowLeft /> Back
+            </h2>
+            <div className='space-x-3 pb-2 px-3'>
+                <HoverCard>
+                    <HoverCardTrigger asChild>
+                        <Link href={`/view-form/${params?.formId}`} target='_blank'>
+                            <Button className="rounded-full w-10 h-10 p-3"><Eye/></Button>
+                        </Link>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-fit text-sm">
+                        <p>Live preview</p>
+                    </HoverCardContent>
+                </HoverCard>
+                <HoverCard>
+                    <HoverCardTrigger asChild>
+                        <Button className="rounded-full w-10 h-10 p-3 bg-blue-700 hover:bg-blue-600"><Share2/></Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-fit text-sm">
+                        <p>Share</p>
+                    </HoverCardContent>
+                </HoverCard>
+            </div>
+        </div>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div className='border rounded-lg p-5 shadow-md'>
                 <Controller 
@@ -96,6 +123,10 @@ function EditForm({params}) {
                         updateControllerFields(value, "background");
                         setSelectedBg(value);
                         }}
+                    selectedStyle={(value)=>{
+                        updateControllerFields(value, "style");
+                        setSelectedStyle(value);
+                        }}
                     />
             </div>
             <div className={`md:col-span-2 p-8 border rounded-lg h-fit min-h-screen flex items-center justify-center ${selectedBg}`}>
@@ -105,6 +136,7 @@ function EditForm({params}) {
                             onFieldUpdate={onFieldUpdate} 
                             onFieldDelete={onFieldDelete}
                             selectedTheme={selectedTheme}
+                            selectedStyle={selectedStyle}
                         />
                     
             </div>
