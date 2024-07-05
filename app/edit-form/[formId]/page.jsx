@@ -13,6 +13,7 @@ import Controller from '@/app/dashboard/_components/Controller'
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import Link from 'next/link'
+import { RWebShare } from 'react-web-share'
 
 function EditForm({params}) {
 
@@ -25,10 +26,14 @@ function EditForm({params}) {
     const [selectedTheme, setSelectedTheme] = useState("light");
     const [selectedBg, setSelectedBg] = useState();
     const [selectedStyle, setSelectedStyle] = useState();
+    const [enabledSignIn, setEnabledSignIn] = useState();
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(()=>{user && getFormData();}, [user]);
 
     const getFormData = async () => {
+        setIsLoading(true);
+
         const result =await db.select().from(forms)
         .where(and(eq(forms.id, params?.formId), 
         eq(forms.createdBy, user?.primaryEmailAddress?.emailAddress)));
@@ -39,6 +44,9 @@ function EditForm({params}) {
         result[0].theme && setSelectedTheme(result[0].theme);
         result[0].background && setSelectedBg(result[0].background);
         result[0].style && setSelectedStyle(result[0].style);
+        setEnabledSignIn(result[0].enabledSignIn);
+
+        setIsLoading(false)
 
     }
 
@@ -86,16 +94,16 @@ function EditForm({params}) {
     }
 
   return (
-    <div className='p-8'>
+    <div className='p-8 dark:bg-primary-foreground'>
         <div className='flex items-center justify-between'>
             <h2 className='w-32 flex items-center gap-2 hover:font-bold mb-3' onClick={()=>{router.back()}}>
                 <ArrowLeft /> Back
             </h2>
-            <div className='space-x-3 pb-2 px-3'>
+            <div className='space-x-3 pb-2 px-3 flex'>
                 <HoverCard>
                     <HoverCardTrigger asChild>
                         <Link href={`/view-form/${params?.formId}`} target='_blank'>
-                            <Button className="rounded-full w-10 h-10 p-3"><Eye/></Button>
+                            <Button className="rounded-full w-10 h-10 p-3 dark:text-white"><Eye/></Button>
                         </Link>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-fit text-sm">
@@ -104,7 +112,18 @@ function EditForm({params}) {
                 </HoverCard>
                 <HoverCard>
                     <HoverCardTrigger asChild>
-                        <Button className="rounded-full w-10 h-10 p-3 bg-blue-700 hover:bg-blue-600"><Share2/></Button>
+                    <div className='w-10 h-10'>
+                        <RWebShare
+                            data={{
+                            text: `${jsonForm.formSubHeading}`,
+                            url: `${process.env.NEXT_PUBLIC_BASE_URL}/view-form/${params?.formId}`,
+                            title: `${jsonForm.formTitle}`,
+                            }}
+                            onClick={() => console.log("shared successfully!")}
+                        >
+                            <Button className="rounded-full w-10 h-10 p-3 bg-blue-700 hover:bg-blue-600 dark:text-white"><Share2/></Button>
+                        </RWebShare>
+                    </div>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-fit text-sm">
                         <p>Share</p>
@@ -114,7 +133,7 @@ function EditForm({params}) {
         </div>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div className='border rounded-lg p-5 shadow-md'>
-                <Controller 
+                {!isLoading && <Controller 
                     selectedTheme={(value)=>{
                         updateControllerFields(value, "theme");
                         setSelectedTheme(value);
@@ -127,7 +146,15 @@ function EditForm({params}) {
                         updateControllerFields(value, "style");
                         setSelectedStyle(value);
                         }}
-                    />
+                    setEnableSignIn={(value) => {
+                        updateControllerFields(value, "enabledSignIn");
+                        setEnabledSignIn(value);
+                        
+                    }}
+                    enabledSignIn={enabledSignIn}
+                    currentTheme={selectedTheme}
+                    currentStyle={selectedStyle}
+                    />}
             </div>
             <div className={`md:col-span-2 p-8 border rounded-lg h-fit min-h-screen flex items-center justify-center ${selectedBg}`}>
             
@@ -137,6 +164,7 @@ function EditForm({params}) {
                             onFieldDelete={onFieldDelete}
                             selectedTheme={selectedTheme}
                             selectedStyle={selectedStyle}
+                            enableSignIn={enabledSignIn}
                         />
                     
             </div>

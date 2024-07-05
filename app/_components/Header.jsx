@@ -13,7 +13,7 @@ function Header() {
   const path = usePathname();
 
   return !path.includes("view-form") && (
-    <div className='shadow-sm border-b px-8 py-5'>
+    <div className='shadow-sm border-b px-8 py-5 sticky top-0 dark:bg-primary-foreground bg-primary-foreground'>
         <div className='flex items-center justify-between'>
             <Image 
                 src={"/logo.svg"}

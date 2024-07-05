@@ -8,11 +8,12 @@ function DashboardLayout({children}) {
   return (
     <SignedIn>
     <div>
-        <div className='md:w-64 fixed max-md:hidden'>
+    
+        <div className='md:w-64 fixed max-md:hidden dark:bg-primary-foreground'>
             <SideNav />
         </div>
         
-        <div className='md:ml-64'>
+        <div className='md:ml-64 dark:bg-primary-foreground'>
             {children}
         </div>
     </div>

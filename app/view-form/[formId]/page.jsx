@@ -16,6 +16,7 @@ function LiveForm(params) {
   const [selectedTheme, setSelectedTheme] = useState("light");
   const [selectedBg, setSelectedBg] = useState();
   const [selectedStyle, setSelectedStyle] = useState();
+  const [enabledSignIn, setEnabledSignIn] = useState();
 
 
   const getFormData = async () => {
@@ -27,6 +28,7 @@ function LiveForm(params) {
     result[0].theme && setSelectedTheme(result[0].theme);
     result[0].background && setSelectedBg(result[0].background);
     result[0].style && setSelectedStyle(result[0].style);
+    setEnabledSignIn(result[0].enabledSignIn);
 
 }
 
@@ -35,14 +37,16 @@ function LiveForm(params) {
       <div className={`p-10 flex items-center justify-center `}>
             
             <FormUi 
+                formId={params?.params.formId}
                 jsonForm={jsonForm}
                 selectedTheme={selectedTheme}
                 selectedStyle={selectedStyle}
                 editable={false}
+                enableSignIn={enabledSignIn}
             />         
         
       </div>
-      <Link className='space-y-2 items-center fixed bottom-5 px-5 text-xs cursor-pointer'
+      <Link className='space-y-2 items-center fixed bottom-5 mx-2 px-4 py-3 text-xs cursor-pointer rounded-lg bg-slate-300 bg-opacity-50'
         href={"/"}
       >
             <Image 

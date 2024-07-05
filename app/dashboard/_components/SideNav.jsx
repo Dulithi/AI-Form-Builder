@@ -1,11 +1,37 @@
 import { Button } from '@/components/ui/button';
 import { Crown, LibraryBig, LineChart, MessageSquare, SquarePlus } from 'lucide-react'
 import { usePathname } from 'next/navigation';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Progress } from "@/components/ui/progress"
+import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
+import { db } from '@/configs';
+import { forms } from '@/configs/schema';
+import { desc, eq } from 'drizzle-orm';
 
 
 function SideNav() {
+
+    const {user} = useUser();
+    const [formListLength, setFormListLength] = useState(0);
+
+    const [formPercentage, setFormPercentage] = useState(0);
+
+    useEffect(()=>{
+        user && getFormList();
+    }, [user]);
+
+    const getFormList = async () => {
+        const result = await db.select().from(forms)
+        .where(eq(forms.createdBy, user?.primaryEmailAddress?.emailAddress))
+        .orderBy(desc(forms.id));
+        setFormListLength(result.length);
+
+    }
+
+    useEffect(()=> {
+        setFormPercentage((formListLength/3)*100);
+    }, [formListLength])
 
     const menuList=[
         {
@@ -46,14 +72,15 @@ function SideNav() {
         <div className='p-8'>
             {menuList.map((item) => {
                 return (
-                    <h2 
+                    <Link
+                        href={item.path} 
                         key={item.id} 
                         className={`flex item-center gap-3 p-4 m-3 hover:bg-primary hover:rounded-lg hover:text-white hover:cursor-pointer ${path==item.path && "bg-primary text-white rounded-lg"}`
                         }
                     >
                         <item.icon/>
                         {item.name}
-                    </h2>
+                    </Link>
                 );
             })}
         </div>
@@ -63,8 +90,9 @@ function SideNav() {
                         Create Form
                 </Button>
                 <div className="w-44">
-                <Progress value={33} />
-                <h2 className="text-sm pt-2 text-gray-500"><strong>1</strong> out of <strong>3</strong> forms created</h2>
+                <Progress value={formPercentage} />
+                <h2 className="text-sm pt-2 text-gray-500"><strong>{formListLength}</strong> out of <strong>3</strong> forms created</h2>
+                <p className="text-xs pt-2 text-gray-500">Upgrade for unlimited forms!</p>
                 </div>
             </div>
             

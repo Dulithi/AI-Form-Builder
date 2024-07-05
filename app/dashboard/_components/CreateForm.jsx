@@ -37,7 +37,7 @@ function CreateForm() {
                 {
                     jsonform: result.response.text(),
                     createdBy: user?.primaryEmailAddress?.emailAddress,
-                    crestedAt: moment().calendar(),
+                    crestedAt: moment().format(),
                 }
             ).returning({id: forms.id});
             console.log("new form id: ", res[0].id);
